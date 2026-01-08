@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NineEvent | Organisation & Billetterie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 1. VARIABLES DE THÈMES */
+        :root {
+            --bg: #0b0e14;
+            --text: #ffffff;
+            --card: rgba(255, 255, 255, 0.05);
+            --accent: #8a2be2;
+            --secondary: #00d4ff;
+            --nav-bg: rgba(11, 14, 20, 0.9);
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f7f6;
+            --text: #1a1a1a;
+            --card: #ffffff;
+            --accent: #6200ee;
+            --secondary: #03dac6;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="vip"] {
+            --bg: #1a1605;
+            --text: #f1e5ac;
+            --card: rgba(212, 175, 55, 0.1);
+            --accent: #d4af37;
+            --secondary: #ffffff;
+            --nav-bg: rgba(26, 22, 5, 0.9);
+        }
+
+        /* 2. STYLE GÉNÉRAL */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0; width: 90%; z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo { font-size: 22px; font-weight: 700; color: var(--accent); }
+
+        .theme-selector select {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            padding: 5px 10px;
+            border-radius: 15px;
+            outline: none;
+        }
+
+        /* 3. HERO & CONTENU */
+        .hero {
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), var(--bg)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1350');
+            background-size: cover;
+            background-position: center;
+            padding-top: 60px;
+        }
+
+        .container { padding: 40px 5%; }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .event-card {
+            background: var(--card);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .event-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+        .event-img { width: 100%; height: 180px; object-fit: cover; }
+        
+        .event-info { padding: 20px; }
+
+        .btn-buy {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--accent), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* 4. MODALE ADRESSE */
+        #addressModal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg);
+            padding: 30px;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            z-index: 2000;
+            width: 320px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">NINE EVENT</div>
+        <div class="theme-selector">
+            <select id="themeChoice" onchange="changeTheme()">
+                <option value="dark">🌙 Sombre</option>
+                <option value="light">☀️ Clair</option>
+                <option value="vip">✨ VIP Gold</option>
+            </select>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Événements Futurs</h1>
+        <p>Réservez vos places pour les meilleures expériences.</p>
+    </section>
+
+    <div class="container">
+        <div class="events-grid">
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1514525253361-bee8718a747c?w=500" class="event-img">
+                <div class="event-info">
+                    <h3>Soirée Mafia Night</h3>
+                    <p>📅 20 Janvier 2026</p>
+                    <p>📍 Club Le Privé</p>
+                    <button class="btn-buy" onclick="checkUserStatus()">Acheter Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addressModal">
+        <h3>📍 Profil incomplet</h3>
+        <p>Une adresse est requise pour tous les membres (anciens et nouveaux).</p>
+        <input type="text" id="userAddr" placeholder="Votre adresse" style="width:90%; padding:10px; margin-bottom:15px; border-radius:10px; border:1px solid #ccc;">
+        <button class="btn-buy" onclick="closeModal()">Valider l'adresse</button>
+    </div>
+
+
+
+
+
+
+  
+
+    <script>
+        const API_URL = "https://mafiabackend.onrender.com";
+
+        // Gérer les thèmes
+        function changeTheme() {
+            const theme = document.getElementById('themeChoice').value;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('nine-theme', theme);
+        }
+
+        // Vérification de la règle "Adresse obligatoire"
+        function checkUserStatus() {
+            // Simulation : si l'utilisateur n'a pas d'adresse dans la base
+            document.getElementById('addressModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            const addr = document.getElementById('userAddr').value;
+            if(addr.length > 5) {
+                document.getElementById('addressModal').style.display = 'none';
+                alert("Adresse enregistrée ! Liaison avec " + API_URL + " pour le ticket...");
+            } else {
+                alert("Veuillez saisir une adresse valide.");
+            }
+        }
+
+        // Au chargement
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('nine-theme') || 'dark';
+            document.getElementById('themeChoice').value = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        };
+    </script>
+</body>
+</html>
