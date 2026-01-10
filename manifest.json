@@ -1,0 +1,16 @@
+{
+  "name": "9EVENT Billetterie",
+  "short_name": "9EVENT",
+  "description": "Application de billetterie officielle 9EVENT",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#8a2be2",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1041/1041916.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
