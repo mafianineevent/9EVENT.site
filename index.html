@@ -525,15 +525,16 @@ img {
 
     <div id="sidebarOverlay" onclick="toggleSidebar(false)" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9998; display:none; backdrop-filter:blur(5px);"></div>
 
-<div id="sideMenu" style="position:fixed; top:0; right:-300px; width:280px; height:100%; background:var(--nav-bg); z-index:9999; transition:0.4s; padding:30px; box-shadow:-5px 0 20px rgba(0,0,0,0.5); border-left:1px solid var(--accent); display:flex; flex-direction:column;">
+<div id="sideMenu" style="position:fixed; top:0; right:-110%; width:280px; height:100%; background:var(--nav-bg); z-index:9999; transition:0.4s ease-in-out; padding:30px; box-shadow:-10px 0 30px rgba(0,0,0,0.5); border-left:2px solid var(--accent); display:flex; flex-direction:column;">
     
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2 style="margin:0; color:var(--accent); font-size:1.5rem;">Menu</h2>
-        <button onclick="toggleSidebar(false)" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        <h2 style="margin:0; color:var(--accent); font-size:1.5rem;">MENU</h2>
+        <button onclick="toggleSidebar(false)" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
     <div style="display:flex; flex-direction:column; gap:15px; flex-grow: 1;">
-        
         <button onclick="openTicketSearchFromMenu()" style="background:var(--card); color:white; border:1px solid var(--accent); padding:15px; border-radius:12px; cursor:pointer; text-align:left; display:flex; align-items:center; gap:12px; font-weight:600; transition:0.3s;">
             <i class="fa-solid fa-ticket"></i> Mes Tickets
         </button>
@@ -558,16 +559,7 @@ img {
             <button style="background:var(--card); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; cursor:not-allowed; text-align:left; display:flex; align-items:center; gap:12px;">
                 <i class="fa-solid fa-clock-rotate-left"></i> Historique (Bientôt)
             </button>
-
-            <button style="background:var(--card); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; cursor:not-allowed; text-align:left; display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-headset"></i> Support (Bientôt)
-            </button>
         </div>
-    </div>
-
-    <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); text-align:center; padding-top:20px;">
-        <p style="margin:0;">NineEvent © 2026</p>
-        <p style="margin:5px 0 0; font-size:0.7rem;">v1.2</p>
     </div>
 </div>
 
@@ -600,18 +592,18 @@ function changeThemeFromMenu() {
 
 
 
-function toggleSidebar(show) {
-    const sideMenu = document.getElementById('sideMenu');
+function toggleSidebar(open) {
+    const menu = document.getElementById('sideMenu');
     const overlay = document.getElementById('sidebarOverlay');
     
-    if (show) {
-        sideMenu.style.right = "0";
+    if (open) {
+        menu.style.right = "0";
         overlay.style.display = "block";
-        document.body.style.overflow = "hidden"; // Empêche le scroll du site
+        document.body.style.overflow = "hidden"; // Bloque le scroll
     } else {
-        sideMenu.style.right = "-300px";
+        menu.style.right = "-110%"; // On cache bien loin
         overlay.style.display = "none";
-        document.body.style.overflow = "auto";
+        document.body.style.overflow = "auto"; // Rend le scroll
     }
 }
 
