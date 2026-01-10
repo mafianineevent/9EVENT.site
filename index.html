@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>Billetterie Officielle</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,6 +28,50 @@
             --card: rgba(255, 255, 255, 0.05); --nav-bg: rgba(11, 14, 20, 0.95);
             --gradient: linear-gradient(45deg, #8a2be2, #00d4ff);
         }
+
+
+
+
+
+        /* Empêche le contenu de déborder à droite */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Ajuste la grille des événements pour mobile */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+/* Force les images à ne jamais dépasser leur parent */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ajuste le header pour les petits écrans */
+@media (max-width: 600px) {
+    .nav-container {
+        padding: 5px 10px;
+        gap: 5px;
+    }
+    .logo {
+        font-size: 20px;
+    }
+    /* On cache la recherche sur mobile pour gagner de la place */
+    .search-wrapper {
+        display: none; 
+    }
+    .nav-tools button {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+}
 
 
 
