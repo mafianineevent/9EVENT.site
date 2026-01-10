@@ -3,212 +3,960 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NineEvent | Organisation & Billetterie</title>
+    <title>Billetterie Officielle</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        /* 1. VARIABLES DE THÈMES */
-        :root {
-            --bg: #0b0e14;
-            --text: #ffffff;
-            --card: rgba(255, 255, 255, 0.05);
-            --accent: #8a2be2;
-            --secondary: #00d4ff;
-            --nav-bg: rgba(11, 14, 20, 0.9);
+        /* --- CONFIGURATION DES THÈMES --- */
+        :root { /* VIOLET PAR DÉFAUT */
+            --bg: #0b0e14; --text: #ffffff; --accent: #8a2be2; --secondary: #00d4ff;
+            --card: rgba(255, 255, 255, 0.05); --nav-bg: rgba(11, 14, 20, 0.95);
+            --gradient: linear-gradient(45deg, #8a2be2, #00d4ff);
         }
+
+
+
+
+.event-card { position: relative; }
+
+/* Badge en haut de l'image */
+.event-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: var(--accent); color: white;
+    padding: 5px 12px; border-radius: 8px;
+    font-size: 0.7rem; font-weight: 700; z-index: 10;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Petits tags sous le titre */
+.event-tags { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+.event-tags span {
+    font-size: 0.7rem; background: rgba(255,255,255,0.05);
+    padding: 3px 8px; border-radius: 5px; color: var(--secondary);
+}
+
+/* Affichage du prix sur la carte */
+.price-tag {
+    font-weight: 700; color: var(--text);
+    margin: 15px 0; font-size: 1.1rem;
+}
+
+
+
+
+
+
+
+
+.details-page {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); z-index: 2000;
+    display: none; overflow-y: auto; padding: 20px;
+}
+
+.back-btn {
+    background: var(--card); color: var(--text); border: none;
+    padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 20px;
+}
+
+.details-container {
+    max-width: 1000px; margin: 0 auto; display: grid;
+    grid-template-columns: 1fr 1fr; gap: 40px;
+}
+
+.details-image img { width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+.det-info { font-size: 1.1rem; color: var(--secondary); margin: 10px 0; }
+
+.price-section {
+    margin-top: 30px; background: var(--card); padding: 20px;
+    border-radius: 20px; border: 1px solid var(--accent);
+}
+
+@media (max-width: 768px) {
+    .details-container { grid-template-columns: 1fr; }
+}
+
+
+
+
 
         [data-theme="light"] {
-            --bg: #f4f7f6;
-            --text: #1a1a1a;
-            --card: #ffffff;
-            --accent: #6200ee;
-            --secondary: #03dac6;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --bg: #f4f7f6; --text: #1a1a1a; --card: #ffffff; --accent: #6200ee;
+            --secondary: #03dac6; --nav-bg: rgba(255, 255, 255, 0.95);
+            --gradient: linear-gradient(45deg, #6200ee, #03dac6);
         }
 
-        [data-theme="vip"] {
-            --bg: #1a1605;
-            --text: #f1e5ac;
-            --card: rgba(212, 175, 55, 0.1);
-            --accent: #d4af37;
-            --secondary: #ffffff;
-            --nav-bg: rgba(26, 22, 5, 0.9);
+        [data-theme="blue"] {
+            --bg: #050b1a; --text: #ffffff; --accent: #0072ff; --secondary: #00c6ff;
+            --card: rgba(255, 255, 255, 0.05); --nav-bg: rgba(5, 11, 26, 0.95);
+            --gradient: linear-gradient(45deg, #0072ff, #00c6ff);
         }
 
-        /* 2. STYLE GÉNÉRAL */
+        [data-theme="red"] {
+            --bg: #1a0505; --text: #ffffff; --accent: #ff0000; --secondary: #ff4d4d;
+            --card: rgba(255, 255, 255, 0.05); --nav-bg: rgba(26, 5, 5, 0.95);
+            --gradient: linear-gradient(45deg, #ff0000, #ff4d4d);
+        }
+
+        [data-theme="gold"] {
+            --bg: #14110b; --text: #f1e5ac; --accent: #d4af37; --secondary: #f1e5ac;
+            --card: rgba(212, 175, 55, 0.05); --nav-bg: rgba(20, 17, 11, 0.95);
+            --gradient: linear-gradient(45deg, #d4af37, #f1e5ac);
+        }
+
+        [data-theme="animated"] {
+            --bg: #0b0e14; --text: #ffffff; --accent: #ff0080; --secondary: #7928ca;
+            --card: rgba(255, 255, 255, 0.05); --nav-bg: rgba(11, 14, 20, 0.95);
+            --gradient: linear-gradient(45deg, #ff0080, #7928ca, #ff0080);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            transition: all 0.4s ease;
-            overflow-x: hidden;
+            margin: 0; font-family: 'Poppins', sans-serif;
+            background-color: var(--bg); color: var(--text);
+            transition: 0.4s; overflow-x: hidden;
         }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            background: var(--nav-bg);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            top: 0; width: 90%; z-index: 1000;
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background: var(--nav-bg); backdrop-filter: blur(15px);
+            position: fixed; top: 0; width: 100%; z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            
+            height: 80px;
         }
 
-        .logo { font-size: 22px; font-weight: 700; color: var(--accent); }
-
-        .theme-selector select {
-            background: var(--card);
-            color: var(--text);
-            border: 1px solid var(--accent);
-            padding: 5px 10px;
-            border-radius: 15px;
-            outline: none;
+        .nav-container {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 10px 20px; gap: 20px;
         }
 
-        /* 3. HERO & CONTENU */
-        .hero {
-            height: 50vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(rgba(0,0,0,0.5), var(--bg)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1350');
-            background-size: cover;
-            background-position: center;
-            padding-top: 60px;
+        .logo { 
+            font-size: 50px; 
+            font-weight: 800; 
+            color: var(--accent); 
+            letter-spacing: 1px;
+            
+         }
+
+        .search-wrapper { position: relative; flex-grow: 1; max-width: 500px; }
+        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); }
+
+        .search-bar {
+            width: 100%; padding: 12px 15px 12px 45px;
+            background: var(--card); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 25px; color: var(--text); outline: none; transition: 0.3s;
         }
 
-        .container { padding: 40px 5%; }
+        .nav-tools { display: flex; align-items: center; gap: 15px; }
 
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
+        /* --- CONTENU --- */
+        .container { padding: 120px 5% 50px; max-width: 1200px; margin: 0 auto; }
+        .events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
 
         .event-card {
-            background: var(--card);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--card); border-radius: 20px; overflow: hidden;
+            transition: 0.3s; border: 1px solid rgba(255,255,255,0.05);
         }
-
+        .event-card.hidden { display: none; }
         .event-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
-        .event-img { width: 100%; height: 180px; object-fit: cover; }
-        
+        .event-img { width: 100%; height: 200px; object-fit: cover; }
         .event-info { padding: 20px; }
+        .event-info i { width: 20px; text-align: center; color: var(--accent); margin-right: 8px; filter: drop-shadow(0 0 5px var(--accent)); }
 
         .btn-buy {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(45deg, var(--accent), var(--secondary));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
+            width: 100%; padding: 12px;
+            background: var(--gradient); border: none; border-radius: 12px;
+            color: white; font-weight: 600; cursor: pointer; background-size: 200% 200%;
         }
 
-        /* 4. MODALE ADRESSE */
-        #addressModal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--bg);
-            padding: 30px;
-            border: 2px solid var(--accent);
-            border-radius: 20px;
-            z-index: 2000;
-            width: 320px;
-            text-align: center;
+        /* --- PROMO BANNER --- */
+        .promo-banner {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--gradient); backdrop-filter: blur(10px);
+            color: white; padding: 15px 25px; border-radius: 50px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            transition: bottom 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999;
+        }
+        .promo-banner.show { bottom: 30px; }
+        .promo-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; padding: 15px; }
+            .search-wrapper { width: 100%; order: 3; }
         }
     </style>
 </head>
+
+
+
+
+
+
+
+
+
+
+
+
 <body>
 
-    <nav>
-        <div class="logo">NINE EVENT</div>
-        <div class="theme-selector">
-            <select id="themeChoice" onchange="changeTheme()">
-                <option value="dark">🌙 Sombre</option>
-                <option value="light">☀️ Clair</option>
-                <option value="vip">✨ VIP Gold</option>
-            </select>
-        </div>
-    </nav>
 
-    <section class="hero">
-        <h1>Événements Futurs</h1>
-        <p>Réservez vos places pour les meilleures expériences.</p>
-    </section>
+
+
+
+    
+
+
+
+
+
+
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">9EVENT</div>
+            
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher un événement..." onkeyup="filterEvents()">
+            </div>
+
+            <div class="nav-tools">
+                <select id="themeChoice" onchange="changeTheme()" style="background:var(--card); color:var(--text); border:1px solid var(--accent); padding:5px 10px; border-radius:15px; cursor:pointer; font-weight:600; font-size: 11px;">
+                    <option value="dark">💜 VIOLET</option>
+                    <option value="light">☀️ CLAIR</option>
+                    <option value="blue">💙 BLEU</option>
+                    <option value="red">❤️ ROUGE</option>
+                    <option value="gold">✨ GOLD</option>
+                    <option value="animated">🌈 ANIMÉ</option>
+                </select>
+                <button onclick="toggleAuthPage(true)" style="background:var(--accent); color:white; border:none; padding:8px 15px; border-radius:15px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+    <i class="fa-solid fa-user-gear"></i> Profil
+</button>
+
+<button onclick="toggleSidebar(true)" style="background:var(--card); color:white; border:1px solid var(--accent); padding:8px 15px; border-radius:15px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+    <i class="fa-solid fa-bars-staggered"></i> Menu
+</button>
+
+            </div>
+        </div>
+    </header>
+
+    
+
+
+
+
+    
+
+
+
 
     <div class="container">
-        <div class="events-grid">
-            <div class="event-card">
-                <img src="https://images.unsplash.com/photo-1514525253361-bee8718a747c?w=500" class="event-img">
+        <h2 id="resultCount">Tous les événements</h2>
+        
+        <div class="events-grid" id="eventsGrid">
+
+
+
+
+<!--  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --> 
+
+
+<div class="event-card" id="event-101">
+    <div class="event-badge">GALA ANNUEL</div>
+    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500" class="event-img">
+    <div class="event-info">
+        <h3 class="event-title">Gala de l'Organisation</h3>
+
+        <div class="event-tags">
+                        <span><i class="fa-solid fa-glass-whiskey"></i> Cocktail offert</span>
+                        <span><i class="fa-solid fa-user-shield"></i> +18 ans</span>
+                    </div>
+
+                    <p><i class="fa-regular fa-calendar-days"></i> 15 Février 2026</p>
+
+                    <p><i class="fa-solid fa-location-dot"></i> Club Le Privé, Paris</p>
+                    
+        
+
+        <div class="price-tag">À partir de 45,00 €</div>
+
+        <button class="btn-buy" onclick="openDetails('event-101')">Voir Détails</button>
+    </div>
+</div>
+
+<!--  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --> 
+
+
+            <div class="event-card" id="event-102">
+                <div class="event-badge">BIENTÔT COMPLET</div>
+                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500" class="event-img">
                 <div class="event-info">
-                    <h3>Soirée Mafia Night</h3>
-                    <p>📅 20 Janvier 2026</p>
-                    <p>📍 Club Le Privé</p>
-                    <button class="btn-buy" onclick="checkUserStatus()">Acheter Ticket</button>
+                    <h3 class="event-title">Mafia Night VIP</h3>
+
+                    <div class="event-tags">
+                        <span><i class="fa-solid fa-glass-whiskey"></i> Cocktail offert</span>
+                        <span><i class="fa-solid fa-user-shield"></i> +18 ans</span>
+                    </div>
+
+                    <p><i class="fa-regular fa-calendar-days"></i> 20 Janvier 2026</p>
+                    <p><i class="fa-solid fa-location-dot"></i> Hôtel Carlton, Cannes</p>
+                    <div class="price-tag">À partir de 45,00 €</div>
+                    <button class="btn-buy" onclick="openDetails('event-102')">Voir Détails</button>
+                </div>
+            </div>
+
+           <!--  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --> 
+ 
+<div class="event-card" id="event-3">
+                <div class="event-badge">BIENTÔT COMPLET</div>
+                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500" class="event-img">
+                <div class="event-info">
+                    <h3 class="event-title">Mafia Night VIP</h3>
+
+                    <div class="event-tags">
+                        <span><i class="fa-solid fa-glass-whiskey"></i> Cocktail offert</span>
+                        <span><i class="fa-solid fa-user-shield"></i> +18 ans</span>
+                    </div>
+
+                    <p><i class="fa-regular fa-calendar-days"></i> 20 Janvier 2026</p>
+                    <p><i class="fa-solid fa-location-dot"></i> Hôtel Carlton, Cannes</p>
+                    <div class="price-tag">À partir de 45,00 €</div>
+                    <button class="btn-buy" onclick="openDetails('event-3')">Voir Détails</button>
+                </div>
+            </div>
+
+<!--  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --> 
+ 
+<div class="event-card" id="event-4">
+                <div class="event-badge">POPULAIRE</div>
+                <img src="https://i.postimg.cc/3w5xp0By/9privat_night_minii.png" class="event-img">
+                <div class="event-info">
+                    <h3 class="event-title">Mafia Pool</h3>
+
+                    <div class="event-tags">
+                        <span><i class="fa-solid fa-glass-whiskey"></i> Cocktail offert</span>
+                        <span><i class="fa-solid fa-user-shield"></i> +18 ans</span>
+                    </div>
+
+                    <p><i class="fa-regular fa-calendar-days"></i> 04 AVRIL 2026</p>
+                    <p><i class="fa-solid fa-location-dot"></i> Yopougon</p>
+                    <div class="price-tag">À partir de 10.000,00 Fcfa</div>
+                    <button class="btn-buy" onclick="openDetails('event-4')">Voir Détails</button>
+                </div>
+            </div>
+
+
+
+
+            
+        </div> 
+
+
+
+        
+        <div id="eventDetailsPage" class="details-page">
+            <button class="back-btn" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i> Retour</button>
+            <div class="details-container">
+                <div class="details-image">
+                    <img id="detImg" src="" alt="Affiche">
+                </div>
+                <div class="details-content">
+                    <h1 id="detTitle">Titre de l'événement</h1>
+                    <p class="det-info"><i class="fa-regular fa-calendar-days"></i> <span id="detDate"></span></p>
+                    <p class="det-info"><i class="fa-solid fa-location-dot"></i> <span id="detLoc"></span></p>
+                    <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 20px 0;">
+                    <h3>Description</h3>
+                    <p id="detDesc">Plongez dans l'ambiance exclusive de NineEvent. Une expérience inoubliable vous attend avec nos meilleurs DJs et invités VIP.</p>
+                    
+                    <div class="price-section">
+                        <div class="price-box">
+                            <span>Ticket Standard</span>
+                            <h2 id="detPrice">10,00 Fcfa</h2>
+                        </div>
+                        <button class="btn-buy" onclick="checkUserStatus()">Acheter mon Ticket</button>
+
+
+
+
+                        <div id="quickPurchase" style="background:var(--card); padding:20px; border-radius:15px; margin-top:15px; border:1px dashed var(--accent);">
+    <h4 style="margin:0 0 10px 0; color:var(--text);">Achat Rapide (Sans compte)</h4>
+    <p style="font-size:0.7rem; color:rgba(255,255,255,0.6); margin-bottom:10px;">Laissez votre numéro, nous vous contacterons pour le ticket.</p>
+    
+    <div style="display:flex; gap:10px;">
+        <input type="tel" id="quickPhone" placeholder="Votre N° de téléphone" style="flex-grow:1; padding:10px; border-radius:10px; border:1px solid var(--accent); background:none; color:white;">
+        <button onclick="confirmQuickBuy()" style="background:var(--accent); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700;">VALIDER</button>
+    </div>
+</div>
+
+
+
+
+                        <div id="ticketPaymentSection" style="display:none; background:var(--card); padding:20px; border-radius:20px; margin-top:20px; border:1px solid var(--secondary);">
+    <h3 style="color:var(--secondary);">ID Ticket : <span id="displayTicketID"></span></h3>
+    
+    <div style="width:100%; background:rgba(255,255,255,0.1); height:15px; border-radius:10px; margin:15px 0; overflow:hidden;">
+        <div id="paymentProgress" style="width: 0%; height:100%; background:var(--gradient); transition:0.5s;"></div>
+    </div>
+    <p id="paymentStatus" style="font-size:0.9rem;">Progression : 0% (Restant : -- Fcfa)</p>
+
+    <div style="display:flex; gap:10px;">
+        <input type="number" id="payAmount" placeholder="Somme" style="flex-grow:1; padding:10px; border-radius:10px; border:none; background:#000; color:#fff;">
+        <button onclick="processPartialPayment()" style="background:var(--secondary); color:black; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;">PAYER</button>
+    </div>
+</div>
+
+
+                    </div>
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div id="ticketSearchPage" style="display:none; text-align:center; padding:40px 20px;">
+    <button class="back-btn" onclick="toggleTicketSearch(false)"><i class="fa-solid fa-arrow-left"></i> Retour à l'accueil</button>
+    <div style="max-width:500px; margin: 0 auto; background:var(--card); padding:30px; border-radius:20px; border:1px solid var(--accent);">
+        <h2 style="color:var(--accent);">Retrouver mon Ticket</h2>
+        <p style="font-size:0.9rem; color:rgba(255,255,255,0.7);">Entrez l'ID de votre ticket (ex: 9E-A1B2C) pour continuer le paiement.</p>
+        
+        <div style="display:flex; gap:10px; margin:20px 0;">
+            <input type="text" id="searchTicketID" placeholder="ID du Ticket" style="flex-grow:1; padding:12px; border-radius:10px; border:1px solid var(--accent); background:none; color:white; text-transform:uppercase;">
+            <button onclick="findMyTicket()" style="background:var(--accent); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700;">RECHERCHER</button>
+        </div>
+
+        <div id="searchResultArea"></div>
+    </div>
+</div>
+
+    </div> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="sidebarOverlay" onclick="toggleSidebar(false)" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9998; display:none; backdrop-filter:blur(5px);"></div>
+
+<div id="sideMenu" style="position:fixed; top:0; right:-300px; width:280px; height:100%; background:var(--nav-bg); z-index:9999; transition:0.4s; padding:30px; box-shadow:-5px 0 20px rgba(0,0,0,0.5); border-left:1px solid var(--accent); display:flex; flex-direction:column;">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <h2 style="margin:0; color:var(--accent); font-size:1.5rem;">Menu</h2>
+        <button onclick="toggleSidebar(false)" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div id="addressModal">
-        <h3>📍 Profil incomplet</h3>
-        <p>Une adresse est requise pour tous les membres (anciens et nouveaux).</p>
-        <input type="text" id="userAddr" placeholder="Votre adresse" style="width:90%; padding:10px; margin-bottom:15px; border-radius:10px; border:1px solid #ccc;">
-        <button class="btn-buy" onclick="closeModal()">Valider l'adresse</button>
+    <div style="display:flex; flex-direction:column; gap:15px; flex-grow: 1;">
+        
+        <button onclick="openTicketSearchFromMenu()" style="background:var(--card); color:white; border:1px solid var(--accent); padding:15px; border-radius:12px; cursor:pointer; text-align:left; display:flex; align-items:center; gap:12px; font-weight:600; transition:0.3s;">
+            <i class="fa-solid fa-ticket"></i> Mes Tickets
+        </button>
+
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;">
+
+        <label style="font-size:0.8rem; color:var(--secondary); text-transform:uppercase; letter-spacing:1px; font-weight:700;">Personnalisation</label>
+        
+        <div style="position:relative; margin-top:5px;">
+            <i class="fa-solid fa-palette" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--accent);"></i>
+            <select id="themeChoiceMenu" onchange="changeThemeFromMenu()" style="width:100%; background:var(--card); color:var(--text); border:1px solid rgba(255,255,255,0.1); padding:12px 12px 12px 40px; border-radius:12px; cursor:pointer; font-weight:600; appearance:none;">
+                <option value="dark">💜 Violet (Dark)</option>
+                <option value="light">☀️ Mode Clair</option>
+                <option value="blue">💙 Bleu Océan</option>
+                <option value="red">❤️ Rouge Mafia</option>
+                <option value="gold">✨ Édition Gold</option>
+                <option value="animated">🌈 Mode Animé</option>
+            </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+            <button style="background:var(--card); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; cursor:not-allowed; text-align:left; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-clock-rotate-left"></i> Historique (Bientôt)
+            </button>
+
+            <button style="background:var(--card); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; cursor:not-allowed; text-align:left; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-headset"></i> Support (Bientôt)
+            </button>
+        </div>
     </div>
 
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); text-align:center; padding-top:20px;">
+        <p style="margin:0;">NineEvent © 2026</p>
+        <p style="margin:5px 0 0; font-size:0.7rem;">v1.2</p>
+    </div>
+</div>
 
 
 
-
-
-  
 
     <script>
-        const API_URL = "https://mafiabackend.onrender.com";
 
-        // Gérer les thèmes
+
+
+function changeThemeFromMenu() {
+    const theme = document.getElementById('themeChoiceMenu').value;
+    
+    // On applique le thème
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Gestion du mode animé
+    if(theme === 'animated') {
+        document.body.style.animation = "gradientBG 10s ease infinite";
+        document.body.style.background = "linear-gradient(-45deg, #0b0e14, #1a0525, #051625, #0b0e14)";
+        document.body.style.backgroundSize = "400% 400%";
+    } else {
+        document.body.style.animation = "none"; 
+        document.body.style.background = "var(--bg)";
+    }
+    
+    // On sauvegarde le choix
+    localStorage.setItem('nine-theme', theme);
+}
+
+
+
+function toggleSidebar(show) {
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (show) {
+        sideMenu.style.right = "0";
+        overlay.style.display = "block";
+        document.body.style.overflow = "hidden"; // Empêche le scroll du site
+    } else {
+        sideMenu.style.right = "-300px";
+        overlay.style.display = "none";
+        document.body.style.overflow = "auto";
+    }
+}
+
+// Nouvelle fonction pour faire le pont entre le menu et la recherche de ticket
+function openTicketSearchFromMenu() {
+    toggleSidebar(false); // Ferme le menu d'abord
+    toggleTicketSearch(true); // Ouvre la page de recherche (ta fonction existante)
+}
+
+
+
+        /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* LOGIQUE DE RECHERCHE DE TICKET PAR ID                                            */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+// 1. Basculer entre l'accueil et la recherche de ticket
+function toggleTicketSearch(show) {
+    const mainContent = document.getElementById('eventsGrid');
+    const title = document.getElementById('resultCount');
+    const searchPage = document.getElementById('ticketSearchPage');
+
+    if (show) {
+        mainContent.style.display = 'none';
+        title.style.display = 'none';
+        searchPage.style.display = 'block';
+    } else {
+        mainContent.style.display = 'grid';
+        title.style.display = 'block';
+        searchPage.style.display = 'none';
+        document.getElementById('searchResultArea').innerHTML = ""; // Reset
+    }
+}
+
+// 2. Rechercher le ticket sur le serveur
+async function findMyTicket() {
+    const ticketId = document.getElementById('searchTicketID').value.trim().toUpperCase();
+    const resultArea = document.getElementById('searchResultArea');
+
+    if (!ticketId) return alert("Veuillez entrer un ID.");
+
+    try {
+        const response = await fetch(`${API_URL}/ticket-status/${ticketId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            const t = data.ticket;
+            const paye = parseFloat(t.montant_paye);
+            const total = parseFloat(t.prix_total);
+            const pourcentage = (paye / total) * 100;
+
+            resultArea.innerHTML = `
+                <div style="margin-top:20px; padding:20px; border-top:1px solid rgba(255,255,255,0.1); text-align:left;">
+                    <h4 style="color:var(--secondary); margin-bottom:5px;">${t.event_name}</h4>
+                    <p style="font-size:0.8rem;">Client : ${t.telephone_client}</p>
+                    
+                    <div style="width:100%; background:rgba(255,255,255,0.1); height:12px; border-radius:10px; margin:15px 0; overflow:hidden;">
+                        <div style="width: ${pourcentage}%; height:100%; background:var(--gradient);"></div>
+                    </div>
+                    <p style="font-size:0.9rem;">Payé : ${paye.toFixed(2)}Fcfa / ${total.toFixed(2)}Fcfa</p>
+                    
+                    ${pourcentage < 100 ? `
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <input type="number" id="extraPay" placeholder="Somme" style="width:80px; padding:8px; border-radius:8px; border:none; background:#000; color:#fff;">
+                            <button onclick="payFromSearch('${t.ticket_id_public}')" style="background:var(--secondary); color:black; border:none; padding:8px 15px; border-radius:8px; font-weight:700; cursor:pointer; flex-grow:1;">COMPLÉTER LE PAIEMENT</button>
+                        </div>
+                    ` : '<h3 style="color:var(--secondary); text-align:center;">✅ TICKET PAYÉ</h3>'}
+                </div>
+            `;
+        } else {
+            resultArea.innerHTML = `<p style="color:#ff4d4d; margin-top:20px;">Ticket introuvable. Vérifiez l'ID.</p>`;
+        }
+    } catch (e) {
+        alert("Erreur serveur.");
+    }
+}
+
+// 3. Payer directement depuis la recherche
+async function payFromSearch(id) {
+    const amount = document.getElementById('extraPay').value;
+    if (!amount || amount <= 0) return;
+
+    try {
+        const response = await fetch(`${API_URL}/pay-partial`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id_public: id, montant: amount })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert("Paiement validé !");
+            findMyTicket(); // Actualise la vue
+        }
+    } catch (e) { alert("Erreur."); }
+}
+
+
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */ 
+/* GESTION DE L'AFFICHAGE DE LA PAGE DE CONNEXION                                    */ 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */ 
+
+function toggleAuthPage(show) {
+    const authPage = document.getElementById('authPage');
+    if (show) {
+        authPage.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Empêche de scroller le site derrière
+    } else {
+        authPage.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Réactive le scroll
+    }
+}
+
+function saveAccount() {
+    const phone = document.getElementById('regPhone').value;
+    const address = document.getElementById('regAddress').value;
+
+    if (!phone || !address) {
+        alert("Le téléphone et l'adresse sont obligatoires pour créer un compte.");
+        return;
+    }
+
+    // Ici on enverra les infos vers MafiaBackend
+    console.log("Données envoyées :", { phone, address });
+    alert("Compte activé ! Bienvenue dans l'Organisation.");
+    toggleAuthPage(false); // On revient sur le site après succès
+}
+
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+
+
+
+
+
+
+
+// On simule les données qui viendront de ta base MafiaBackend
+
+// REMPLACE LES DEUX ANCIENNES FONCTIONS openDetails PAR CELLE-CI :
+// 1. BASE DE DONNÉES LOCALE (Assure-toi que les IDs correspondent à tes boutons)
+const eventData = {
+    "event-101": {
+        title: "Mafia Night VIP",
+        date: "20 Janvier 2026",
+        loc: "Club Le Privé, Paris",
+        price: "45,00 €",
+        desc: "Une soirée immersive dans l'univers de la Mafia des années 30. Tenue correcte exigée. Buffet premium et cocktails exclusifs inclus.",
+        img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500"
+        
+    },
+    "event-102": {
+        title: "Gala de l'Organisation",
+        date: "15 Février 2026",
+        loc: "Hôtel Carlton, Cannes",
+        price: "12,00 €",
+        desc: "Le rendez-vous prestigieux de l'élite de NineEvent. Dîner gastronomique et orchestre symphonique pour une nuit hors du temps.",
+        img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
+    },
+    "event-3": {
+        title: "Mafia Night VIP",
+        date: "20 Janvier 2026",
+        loc: "Club Le Privé, Paris",
+        price: "5,00 €",
+        desc: "Une soirée immersive dans l'univers de la Mafia des années 30. Tenue correcte exigée. Buffet premium et cocktails exclusifs inclus.",
+        img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500"
+        
+    },
+
+    "event-4": {
+        title: "Mafia Pool",
+        date: "04 AVRIL 2026",
+        loc: "Club Le Privé, Paris",
+        price: "10.000,00 Fcfa",
+        desc: "Une soirée immersive dans l'univers de la Mafia des années 30. Tenue correcte exigée. Buffet premium et cocktails exclusifs inclus.",
+        img: "https://i.postimg.cc/3w5xp0By/9privat_night_minii.png"
+        
+    },
+
+
+};
+
+// 2. FONCTION UNIQUE POUR OUVRIR LES DÉTAILS
+function openDetails(idOrTitle, date, loc, price, img) {
+    const detailsPage = document.getElementById('eventDetailsPage');
+    
+    // Si c'est un ID connu dans eventData
+    if (eventData[idOrTitle]) {
+        const data = eventData[idOrTitle];
+        document.getElementById('detTitle').innerText = data.title;
+        document.getElementById('detDate').innerText = data.date;
+        document.getElementById('detLoc').innerText = data.loc;
+        document.getElementById('detPrice').innerText = data.price;
+        document.getElementById('detDesc').innerText = data.desc;
+        document.getElementById('detImg').src = data.img;
+    } 
+    // Sinon, on utilise les paramètres envoyés par le bouton (ancien système)
+    else {
+        document.getElementById('detTitle').innerText = idOrTitle;
+        document.getElementById('detDate').innerText = date || "Date à venir";
+        document.getElementById('detLoc').innerText = loc || "Lieu secret";
+        document.getElementById('detPrice').innerText = price || "-- Fcfa";
+        document.getElementById('detDesc').innerText = "Détails de l'événement NineEvent prochainement disponibles.";
+        document.getElementById('detImg').src = img || "";
+    }
+
+    detailsPage.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Bloque le scroll derrière
+}
+
+// 3. FONCTION POUR FERMER
+function closeDetails() {
+    document.getElementById('eventDetailsPage').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Réactive le scroll
+}
+
+// 4. FONCTION DE RECHERCHE AMÉLIORÉE
+function filterEvents() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.getElementsByClassName('event-card');
+    let count = 0;
+
+    for (let i = 0; i < cards.length; i++) {
+        const title = cards[i].querySelector('.event-title').innerText.toLowerCase();
+        if (title.includes(input)) {
+            cards[i].style.display = "block";
+            count++;
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+    document.getElementById('resultCount').innerText = input ? `${count} résultat(s) trouvé(s)` : "Tous les événements";
+}
+
+// 5. SÉCURITÉ ACHAT (Rappel : Adresse obligatoire pour anciens utilisateurs)
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* GESTION DU BACKEND : INSCRIPTION ET CONNEXION                                  */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+function showAuth() {
+    document.getElementById('authModal').style.display = 'flex';
+}
+
+function closeAuth() {
+    document.getElementById('authModal').style.display = 'none';
+}
+
+// SIMULATION D'ENVOI AU BACKEND MAFIABACKEND
+async function registerUser() {
+    const phone = document.getElementById('userPhone').value;
+    const email = document.getElementById('userEmail').value;
+    const address = document.getElementById('userAddress').value;
+
+    if (!phone || !address) {
+        alert("Le téléphone et l'adresse sont obligatoires !");
+        return;
+    }
+
+    try {
+        const response = await fetch('https://TON-LIEN-RENDER.com/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                telephone: phone,
+                adresse: address,
+                password: "123", // Mot de passe par défaut pour l'instant
+                username: "Membre"
+            })
+        });
+        const data = await response.json();
+        if(data.success) {
+            alert("Profil enregistré sur le serveur !");
+            closeAuth();
+        }
+    } catch (e) {
+        alert("Erreur de connexion au serveur.");
+    }
+}
+
+function loginWithGoogle() {
+    alert("Connexion Gmail en cours... N'oubliez pas de renseigner votre téléphone après.");
+}
+
+// Remplace checkUserStatus pour ouvrir la modal
+function checkUserStatus() {
+    showAuth();
+}
+
+        // GESTION THÈMES
         function changeTheme() {
             const theme = document.getElementById('themeChoice').value;
             document.documentElement.setAttribute('data-theme', theme);
+            if(theme === 'animated') {
+                document.body.style.animation = "gradientBG 10s ease infinite";
+                document.body.style.background = "linear-gradient(-45deg, #0b0e14, #1a0525, #051625, #0b0e14)";
+                document.body.style.backgroundSize = "400% 400%";
+            } else {
+                document.body.style.animation = "none"; document.body.style.background = "var(--bg)";
+            }
             localStorage.setItem('nine-theme', theme);
         }
 
-        // Vérification de la règle "Adresse obligatoire"
-        function checkUserStatus() {
-            // Simulation : si l'utilisateur n'a pas d'adresse dans la base
-            document.getElementById('addressModal').style.display = 'block';
+        // PUB / ANNONCE
+        function showAnnouncement(text, icon = "fa-tag") {
+            document.getElementById('promoText').innerText = text;
+            document.getElementById('promoIcon').className = `fa-solid ${icon}`;
+            document.getElementById('promoBanner').classList.add('show');
+            setTimeout(() => { closePromo(); }, 20000);
         }
+        function closePromo() { document.getElementById('promoBanner').classList.remove('show'); }
 
-        function closeModal() {
-            const addr = document.getElementById('userAddr').value;
-            if(addr.length > 5) {
-                document.getElementById('addressModal').style.display = 'none';
-                alert("Adresse enregistrée ! Liaison avec " + API_URL + " pour le ticket...");
-            } else {
-                alert("Veuillez saisir une adresse valide.");
+        window.onload = () => {
+            const saved = localStorage.getItem('nine-theme') || 'dark';
+            document.getElementById('themeChoice').value = saved;
+            changeTheme();
+            setTimeout(() => { showAnnouncement("Offre limitée : -20% sur la Mafia Night !", "fa-fire"); }, 300);
+        };
+
+
+
+
+
+
+
+
+        /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* LOGIQUE DE PAIEMENT PAR ID TICKET (PETIT À PETIT)                                */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+const API_URL = "https://mafiabackend.onrender.com"; // Vérifie que c'est bien ton URL
+
+// 1. Action du bouton VALIDER (Achat rapide)
+async function confirmQuickBuy() {
+    const phone = document.getElementById('quickPhone').value;
+    const eventName = document.getElementById('detTitle').innerText;
+    const priceText = document.getElementById('detPrice').innerText;
+    // Nettoie le prix pour le calcul (enlève "€" et remplace "," par ".")
+    const price = parseFloat(priceText.replace(',', '.').replace(/[^\d.-]/g, ''));
+
+    if (!phone) return alert("Veuillez entrer votre numéro.");
+
+    try {
+        const response = await fetch(`${API_URL}/quick-buy`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                event_name: eventName, 
+                telephone: phone, 
+                prix_total: price 
+            })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            // On affiche l'ID généré dans le HTML
+            document.getElementById('displayTicketID').innerText = data.ticket.ticket_id_public;
+            
+            // On bascule les sections visuelles
+            document.getElementById('quickPurchase').style.display = 'none';
+            document.getElementById('ticketPaymentSection').style.display = 'block';
+            
+            updateProgressUI(data.ticket);
+            alert("Ticket réservé ! Votre ID de paiement est : " + data.ticket.ticket_id_public);
+        }
+    } catch (e) { alert("Erreur de connexion au serveur."); }
+}
+
+// 2. Action du bouton PAYER
+async function processPartialPayment() {
+    const idPublic = document.getElementById('displayTicketID').innerText;
+    const montantInput = document.getElementById('payAmount');
+    const montant = parseFloat(montantInput.value);
+
+    if (!montant || montant <= 0) return alert("Entrez une somme valide.");
+
+    try {
+        const response = await fetch(`${API_URL}/pay-partial`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id_public: idPublic, montant: montant })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            updateProgressUI(data.ticket);
+            montantInput.value = ""; // Vide le champ
+            if (parseFloat(data.ticket.montant_paye) >= parseFloat(data.ticket.prix_total)) {
+                alert("Félicitations ! Ticket entièrement payé.");
             }
         }
+    } catch (e) { alert("Erreur lors du versement."); }
+}
 
-        // Au chargement
-        window.onload = () => {
-            const savedTheme = localStorage.getItem('nine-theme') || 'dark';
-            document.getElementById('themeChoice').value = savedTheme;
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        };
+// 3. Mise à jour visuelle (Barre et texte)
+function updateProgressUI(ticket) {
+    const total = parseFloat(ticket.prix_total);
+    const paye = parseFloat(ticket.montant_paye);
+    const pourcentage = (paye / total) * 100;
+    const restant = total - paye;
+
+    document.getElementById('paymentProgress').style.width = pourcentage + "%";
+    document.getElementById('paymentStatus').innerText = 
+        `Progression : ${pourcentage.toFixed(0)}% (Restant : ${restant.toFixed(2)} Fcfa)`;
+}
     </script>
 </body>
 </html>
